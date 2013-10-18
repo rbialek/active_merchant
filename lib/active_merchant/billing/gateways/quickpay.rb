@@ -238,7 +238,8 @@ module ActiveMerchant #:nodoc:
         post = {}
 
         add_invoice(post, options)
-        add_reference(post, identification) if identification = options[:transaction]
+        # don't add transaction if ordernumber is present
+        add_reference(post, identification) if identification = options[:transaction] && post[:ordernumber].blank?
 
         commit(:status, post)
       end
@@ -255,7 +256,7 @@ module ActiveMerchant #:nodoc:
       end
 
       def add_invoice(post, options)
-        post[:ordernumber] = format_order_number(options[:order_id])
+        post[:ordernumber] = format_order_number(options[:order_id]||options[:ordernumber])
       end
 
       def add_creditcard(post, credit_card, options)
