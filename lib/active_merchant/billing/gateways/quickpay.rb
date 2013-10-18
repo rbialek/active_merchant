@@ -145,7 +145,7 @@ module ActiveMerchant #:nodoc:
           :recurring => %w(protocol msgtype merchant ordernumber amount currency
                            autocapture transaction apikey),
 
-          :status    => %w(protocol msgtype merchant transaction apikey),
+          :status    => %w(protocol msgtype merchant transaction ordernumber apikey),
 
           :chstatus  => %w(protocol msgtype merchant apikey)
         }        
@@ -232,6 +232,15 @@ module ActiveMerchant #:nodoc:
         add_testmode(post)
 
         commit(:subscribe, post)
+      end
+
+      def status(options = {})
+        post = {}
+
+        add_invoice(post, options)
+        add_reference(post, identification) if identification = options[:transaction]
+
+        commit(:status, post)
       end
 
       private
